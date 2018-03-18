@@ -11,7 +11,7 @@ def update(idict, count, WORK, outname):
     from the super long string phylip file. Makes
     for faster reading. """
 
-    data = iter(open(WORK+"outfiles/"+outname+".loci.phy"))
+    data = iter(open(WORK+"outfiles/"+outname+".alleles.phy"))
     ntax, nchar = data.next().strip().split()
 
     ## read in max N bp at a time                                                                            
@@ -29,12 +29,19 @@ def makephy(WORK, outname, names, longname):
     """ builds phy output. If large files writes 50000 loci 
         at a time to tmp files and rebuilds at the end"""
 
-    " order names "
     names = list(names)
+
+    tam = len(names)
+    for n in range(0,tam):
+       b = names[n]+"_1"
+       names[n] += "_0"
+       names.append(b)
+
+    " order names "
     names.sort()
     
     " read in loci file "
-    locus = iter(open(WORK+"outfiles/"+outname+".loci", 'rb'))
+    locus = iter(open(WORK+"outfiles/"+outname+".alleles", 'rb'))
 
     " dict for saving the full matrix "
     fdict = {name:[] for name in names}
@@ -115,7 +122,7 @@ def makephy(WORK, outname, names, longname):
             fdict = {name:[] for name in names}
 
     ## print out .PHY file, if really big, pull form multiple tmp pickle
-    superout = open(WORK+"outfiles/"+outname+".loci.phy", 'wb')
+    superout = open(WORK+"outfiles/"+outname+".alleles.phy", 'wb')
     print >>superout, len(names), nbases
     if nloci < 1e4:
         for name in names:
@@ -134,7 +141,7 @@ def makephy(WORK, outname, names, longname):
                     superout.write(tmpin.read())
             superout.write("\n")
     superout.close()
-    raxml_part_out = open(WORK+"outfiles/"+outname+".loci.phy.partitions", 'w')
+    raxml_part_out = open(WORK+"outfiles/"+outname+".alleles.phy.partitions", 'w')
     for partition in partitions:
         print >>raxml_part_out, "DNA, %s" % (partition)
     raxml_part_out.close()
@@ -146,8 +153,8 @@ def makenex(WORK, outname, names, longname, partitions):
     """ PRINT NEXUS """
 
     " make nexus output "
-    data   = iter(open(WORK+"outfiles/"+outname+".loci.phy"))
-    nexout = open(WORK+"outfiles/"+outname+".loci.nex", 'wb')
+    data   = iter(open(WORK+"outfiles/"+outname+".alleles.phy"))
+    nexout = open(WORK+"outfiles/"+outname+".alleles.nex", 'wb')
 
     ntax, nchar = data.next().strip().split(" ")
 

@@ -21,6 +21,8 @@ import loci2treemix
 import loci2SNP
 import loci2mig
 import loci2gphocs
+import alleles2mig
+import alleles2phynex
 
 
 def unstruct(amb):
@@ -964,10 +966,11 @@ def main(outgroup, minspecies, outname,
         os.mkdir(os.path.join(WORK, "tmp"))
         if any([i in formats for i in ['n','p']]):
             if 'p' in formats:
-                print "\tfiltering & writing to phylip file"
+                print "\tfiltering & writing to phylip files"
             if 'n' in formats:
-                print "\twriting nexus file"
+                print "\twriting nexus files"
             loci2phynex.make(WORK,outname,names,longname, formats)
+            alleles2phynex.make(WORK,outname,names,longname, formats)
     finally:
         if os.path.exists(os.path.join(WORK, "tmp")):
             shutil.rmtree(os.path.join(WORK, "tmp"))
@@ -1009,8 +1012,9 @@ def main(outgroup, minspecies, outname,
     " make migrate output "
     if 'm' in formats:
         if gids:
-            print "\twriting migrate-n file"
+            print "\twriting migrate-n files"
             loci2mig.make(WORK, outname, taxadict, minhits, seed)
+            alleles2mig.make(WORK, outname, taxadict, minhits, seed)
         else:
-            print "\t  ** must enter group/clade assignments for migrate-n output "
+            print "\t  ** must enter group/clade assignments for migrate-n outputs "
 

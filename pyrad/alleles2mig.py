@@ -15,8 +15,11 @@ import alignable
 
 def make(WORK, outname, taxadict, minhits, seed):
 
+    for m in range(0,len(minhits)):
+        minhits[m] = int(minhits[m])*2
+
     ## outfile
-    outfile = open(WORK+"/outfiles/"+outname+".loci.migrate", 'w')
+    outfile = open(WORK+"/outfiles/"+outname+".alleles.migrate", 'w')
 
     ## cleanup taxadict
     taxa = OrderedDict()
@@ -24,9 +27,12 @@ def make(WORK, outname, taxadict, minhits, seed):
         taxa[group] = []
         for samp in taxadict[group]:
             a = samp.split("/")[-1].replace(".consens.gz","")
+            b = a+"_1"
+            a += "_0"
             taxa[group].append(a)
-
-	print "\t    Loci file"
+            taxa[group].append(b)
+	
+	print "\t    Alleles file"
     print "\t        data set reduced for group coverage minimums"
     for i,j in zip(taxa,minhits):
         print "\t       ",i, taxa[i], "minimum=",j
@@ -39,7 +45,7 @@ def make(WORK, outname, taxadict, minhits, seed):
     MINS = zip(taxa.keys(), minhits)
 
     ## read in data to sample names
-    loci  = open(WORK+"/outfiles/"+outname+".loci",'r').read().strip().split("|\n")[:]
+    loci  = open(WORK+"/outfiles/"+outname+".alleles",'r').read().strip().split("|\n")[:]
     for loc in loci:
         samps = [i.split(" ")[0].replace(">","") for i in loc.split("\n") if ">" in i]
         ## filter for coverage
